@@ -40,7 +40,7 @@ class ThorComponentGenerator extends Generator {
     final className = classElement.name;
     final entries = <String>[];
 
-    for (final field in classElement.fields) {
+    for (final field in _getAllFields(classElement)) {
       if (field.isStatic || field.isSynthetic) continue;
 
       if (_hasAnnotation(field, 'StyleAnnotation')) {
@@ -113,16 +113,17 @@ extension ${className}Css on $className {
       final attrName = _getPropertyAnnotationName(field);
       if (attrName == null) continue;
 
-      // If the type has toStyle()/toCss(), it's a CSS style → skip here
-      if (_isStyleType(field.type)) continue;
+      // If the type has toStyle()/toCss(), or is explicitly marked as style → skip here
+      if (_isStyleType(field.type) || _isPropertyMarkedAsStyle(field)) continue;
 
       final isNullable =
           field.type.nullabilitySuffix == NullabilitySuffix.question;
       final isString = field.type.isDartCoreString;
 
       if (isNullable) {
-        final valueExpr =
-            isString ? '${field.name}!' : '${field.name}!.toString()';
+        final valueExpr = isString
+            ? '${field.name}!'
+            : '${field.name}!.toString()';
         entries.add("if (${field.name} != null) '$attrName': $valueExpr");
       } else {
         final valueExpr = isString ? field.name : '${field.name}.toString()';
@@ -142,10 +143,7 @@ extension ${className}Css on $className {
   /// Generates `_$styles` — CSS style string from:
   /// 1. `@PropertyAnnotation` fields whose type has `toStyle()`/`toCss()`
   /// 2. `@StyleAnnotation` nested style objects
-  void _generateStylesGetter(
-    StringBuffer buffer,
-    ClassElement classElement,
-  ) {
+  void _generateStylesGetter(StringBuffer buffer, ClassElement classElement) {
     final parts = <String>[];
 
     for (final field in _getAllFields(classElement)) {
@@ -163,10 +161,11 @@ extension ${className}Css on $className {
         continue;
       }
 
-      // @PropertyAnnotation on field with style-capable type
+      // @PropertyAnnotation on field with style-capable type or marked isStyle
       final cssProperty = _getPropertyAnnotationName(field);
       if (cssProperty == null) continue;
-      if (!_isStyleType(field.type)) continue;
+      if (!_isStyleType(field.type) && !_isPropertyMarkedAsStyle(field))
+        continue;
 
       final valueExpr = _getValueExpression(field);
       if (valueExpr == null) continue;
@@ -194,10 +193,21 @@ extension ${className}Css on $className {
 
   // ---- Type classification ----
 
-  /// Returns true if the type has `toStyle()`, `toCss()`, or uses `ToStyleMixin`.
+  /// Returns true if the type has `toStyle()`, `toCss()`, uses `ToStyleMixin`,
+  /// or is an enum with a `.value` property (CSS value enums).
   bool _isStyleType(DartType type) {
     if (type is! InterfaceType) return false;
     final element = type.element;
+
+    // Enums with .value are treated as CSS style types
+    if (element is EnumElement && _hasField(element, 'value')) {
+      return true;
+    }
+
+    // Enums with toCss() method are also CSS style types
+    if (element is EnumElement && _hasMethodInEnum(element, 'toCss')) {
+      return true;
+    }
 
     if (element is ClassElement) {
       if (_hasToStyleMixin(element)) return true;
@@ -205,6 +215,19 @@ extension ${className}Css on $className {
       if (_hasMethod(element, 'toCss')) return true;
     }
 
+    return false;
+  }
+
+  /// Returns true if a field's `@PropertyAnnotation` has `isStyle: true`.
+  bool _isPropertyMarkedAsStyle(FieldElement field) {
+    for (final meta in field.metadata) {
+      final element = meta.element;
+      if (element is ConstructorElement &&
+          element.enclosingElement3.name == 'PropertyAnnotation') {
+        final value = meta.computeConstantValue();
+        return value?.getField('isStyle')?.toBoolValue() ?? false;
+      }
+    }
     return false;
   }
 
@@ -275,8 +298,8 @@ extension ${className}Css on $className {
     if (type is InterfaceType) {
       final element = type.element;
 
-      if (element is EnumElement && _hasField(element, 'value')) {
-        return '\${$name$bang.value}';
+      if (element is EnumElement && _hasMethodInEnum(element, 'toStyle')) {
+        return '\${$name$bang.toStyle()}';
       }
 
       if (element is ClassElement) {
@@ -295,6 +318,10 @@ extension ${className}Css on $className {
       element.fields.any((f) => f.name == fieldName && !f.isEnumConstant);
 
   bool _hasMethod(ClassElement element, String methodName) =>
+      element.methods.any((m) => m.name == methodName);
+
+  /// Check if an enum has a specific method
+  bool _hasMethodInEnum(EnumElement element, String methodName) =>
       element.methods.any((m) => m.name == methodName);
 
   // ---- Field traversal ----

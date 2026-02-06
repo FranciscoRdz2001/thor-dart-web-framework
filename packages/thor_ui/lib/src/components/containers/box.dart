@@ -1,7 +1,5 @@
 import 'package:thor/thor.dart';
-import 'package:thor_ui/src/components/containers/decorated_box.dart';
-import 'package:thor_ui/src/properties/containers/box_decoration.dart';
-import 'package:thor_ui/src/styles/edge_inset.dart';
+import 'package:thor_ui/thor_ui.dart';
 part 'box.g.dart';
 
 @ComponentAnnotation('div')
@@ -11,6 +9,9 @@ class Box extends DecoratedBox {
 
   @PropertyAnnotation('width')
   final Unit? width;
+
+  @PropertyAnnotation('display', isStyle: true)
+  final Alignment? alignment;
 
   @StyleAnnotation()
   final EdgeInsets? padding;
@@ -22,6 +23,7 @@ class Box extends DecoratedBox {
     this.padding,
     super.child,
     super.decoration,
+    this.alignment,
   });
 
   @override

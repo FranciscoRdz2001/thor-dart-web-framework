@@ -33,32 +33,32 @@ class _CounterState extends State<Counter> {
 
   @override
   Component build(BuildContext context) {
-    return ElementNode(
-      tag: 'div',
-      attributes: {'class': 'counter'},
+    print('${context.breakpoint}');
+    return Row(
+      gap: 20.px,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text('Welcome to Thor'),
-        Box(
-          width: 100.px,
-          padding: EdgeInsets.symmetric(vertical: 50.px),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(12.px),
-            color: Color.red,
+        Expanded(
+          child: Box(
+            alignment: Alignment.center,
+            padding: EdgeInsets.symmetric(vertical: 50.px),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(12.px),
+              color: Color.red,
+            ),
+            child: Text('This is a box'),
           ),
-          child: Text('This is a box'),
         ),
-        // ElementNode(tag: 'h1', children: [TextNode('Hello, Thor!')]),
-        // ElementNode(tag: 'p', children: [TextNode('Count: $_count')]),
-        // ElementNode(
-        //   tag: 'button',
-        //   events: {'click': (_) => setState(() => _count++)},
-        //   children: [TextNode('Increment')],
-        // ),
-        // ElementNode(
-        //   tag: 'button',
-        //   events: {'click': (_) => setState(() => _count--)},
-        //   children: [TextNode('Decrement')],
-        // ),
+
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text('Counter: $_count'),
+            Text('--------Counter: $_count --------'),
+            Text('---------------- Counter: $_count ----------------'),
+          ],
+        ),
       ],
     );
   }

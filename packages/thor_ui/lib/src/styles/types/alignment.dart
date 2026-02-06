@@ -1,4 +1,6 @@
-enum Alignment {
+import 'package:thor/thor.dart';
+
+enum Alignment with ToStyleMixin {
   topLeft('flex-start', 'flex-start'),
   topCenter('flex-start', 'center'),
   topRight('flex-start', 'flex-end'),
@@ -12,4 +14,8 @@ enum Alignment {
   const Alignment(this.alignItems, this.justifyContent);
   final String alignItems;
   final String justifyContent;
+
+  @override
+  String toStyle() =>
+      'flex; align-items: $alignItems; justify-content: $justifyContent;';
 }
