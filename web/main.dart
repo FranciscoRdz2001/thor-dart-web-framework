@@ -38,19 +38,27 @@ class _CounterState extends State<Counter> {
       attributes: {'class': 'counter'},
       children: [
         Text('Welcome to Thor'),
-        Box(height: 100.px, width: 100.px, child: Text('This is a box')),
-        ElementNode(tag: 'h1', children: [TextNode('Hello, Thor!')]),
-        ElementNode(tag: 'p', children: [TextNode('Count: $_count')]),
-        ElementNode(
-          tag: 'button',
-          events: {'click': (_) => setState(() => _count++)},
-          children: [TextNode('Increment')],
+        Box(
+          width: 100.px,
+          padding: EdgeInsets.symmetric(vertical: 50.px),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(12.px),
+            color: Color.red,
+          ),
+          child: Text('This is a box'),
         ),
-        ElementNode(
-          tag: 'button',
-          events: {'click': (_) => setState(() => _count--)},
-          children: [TextNode('Decrement')],
-        ),
+        // ElementNode(tag: 'h1', children: [TextNode('Hello, Thor!')]),
+        // ElementNode(tag: 'p', children: [TextNode('Count: $_count')]),
+        // ElementNode(
+        //   tag: 'button',
+        //   events: {'click': (_) => setState(() => _count++)},
+        //   children: [TextNode('Increment')],
+        // ),
+        // ElementNode(
+        //   tag: 'button',
+        //   events: {'click': (_) => setState(() => _count--)},
+        //   children: [TextNode('Decrement')],
+        // ),
       ],
     );
   }

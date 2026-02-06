@@ -1,18 +1,15 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'box.dart';
+part of 'decorated_box.dart';
 
 // **************************************************************************
 // ThorComponentGenerator
 // **************************************************************************
 
-extension _$BoxGenerated on Box {
+extension _$DecoratedBoxGenerated on DecoratedBox {
   String get _$tag => 'div';
   String? get _$styles {
     final parts = <String>[
-      if (height != null) 'height: ${height!.toStyle()}',
-      if (width != null) 'width: ${width!.toStyle()}',
-      if (padding != null) padding!.toCss(),
       if (decoration != null) decoration!.toCss(),
     ].where((s) => s.isNotEmpty);
     return parts.isEmpty ? null : parts.join('; ');

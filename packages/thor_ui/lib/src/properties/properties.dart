@@ -4,8 +4,4 @@
 /// component appearance and behavior.
 library;
 
-// TODO: Export properties as they are added
-// export 'color_property.dart';
-// export 'spacing_property.dart';
-// export 'typography_property.dart';
-// export 'layout_property.dart';
+export 'containers/containers.dart';
