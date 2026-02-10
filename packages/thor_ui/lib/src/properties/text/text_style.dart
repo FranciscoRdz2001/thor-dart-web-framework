@@ -5,27 +5,27 @@ part 'text_style.g.dart';
 
 @StyleAnnotation()
 class TextStyle {
-  @PropertyAnnotation('font-size')
+  @StylePropertyAnnotation('font-size')
   final Unit? fontSize;
-  @PropertyAnnotation('font-weight')
+  @StylePropertyAnnotation('font-weight')
   final FontWeight? fontWeight;
-  @PropertyAnnotation('font-style')
+  @StylePropertyAnnotation('font-style')
   final FontStyle? fontStyle;
-  @PropertyAnnotation('color')
+  @StylePropertyAnnotation('color')
   final Color? color;
-  @PropertyAnnotation('text-align')
+  @StylePropertyAnnotation('text-align')
   final TextAlign? textAlign;
-  @PropertyAnnotation('text-decoration')
+  @StylePropertyAnnotation('text-decoration')
   final TextDecoration? decoration;
-  @PropertyAnnotation('text-decoration-color')
+  @StylePropertyAnnotation('text-decoration-color')
   final Color? decorationColor;
-  @PropertyAnnotation('letter-spacing')
+  @StylePropertyAnnotation('letter-spacing')
   final String? letterSpacing;
-  @PropertyAnnotation('line-height')
+  @StylePropertyAnnotation('line-height')
   final String? lineHeight;
-  @PropertyAnnotation('font-family')
+  @StylePropertyAnnotation('font-family')
   final String? fontFamily;
-  @PropertyAnnotation('text-overflow')
+  @StylePropertyAnnotation('text-overflow')
   final TextOverflow? overflow;
   final int? maxLines;
 

@@ -16,7 +16,7 @@ class Text extends LeafElementComponent {
     return ElementNode(
       tag: _$tag,
       children: [TextNode(data)],
-      attributes: {..._$attributes, 'style': ?_$styles},
+      attributes: _$attributes,
     );
   }
 

@@ -10,6 +10,6 @@ class BoxDecoration {
   @StyleAnnotation()
   final BorderRadius? borderRadius;
 
-  @PropertyAnnotation('background-color')
+  @StylePropertyAnnotation('background-color')
   final Color? color;
 }

@@ -3,16 +3,16 @@ part 'box_constraints.g.dart';
 
 @StyleAnnotation()
 class BoxConstraints {
-  @PropertyAnnotation('min-width')
+  @StylePropertyAnnotation('min-width')
   final Unit? minWidth;
 
-  @PropertyAnnotation('min-height')
+  @StylePropertyAnnotation('min-height')
   final Unit? minHeight;
 
-  @PropertyAnnotation('max-width')
+  @StylePropertyAnnotation('max-width')
   final Unit? maxWidth;
 
-  @PropertyAnnotation('max-height')
+  @StylePropertyAnnotation('max-height')
   final Unit? maxHeight;
 
   const BoxConstraints({

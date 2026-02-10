@@ -9,7 +9,10 @@ part of 'expanded.dart';
 extension _$ExpandedGenerated on Expanded {
   String get _$tag => 'div';
   String get _$className => 'expanded';
-  Map<String, String> get _$attributes => {'class': _$className};
+  Map<String, String> get _$attributes => {
+    'class': _$className,
+    'style': ?_$styles,
+  };
   String? get _$styles {
     final parts = <String>['flex: ${flex}'].where((s) => s.isNotEmpty);
     return parts.isEmpty ? null : parts.join('; ');

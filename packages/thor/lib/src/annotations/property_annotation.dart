@@ -1,4 +1,4 @@
-class PropertyAnnotation {
+class StylePropertyAnnotation {
   final String name;
 
   /// If true, this property will be classified as a CSS style
@@ -7,5 +7,5 @@ class PropertyAnnotation {
   /// that represent CSS values (e.g. `display: 'flex'`).
   final bool isStyle;
 
-  const PropertyAnnotation(this.name, {this.isStyle = false});
+  const StylePropertyAnnotation(this.name, {this.isStyle = false});
 }

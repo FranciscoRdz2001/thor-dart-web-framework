@@ -1,21 +1,19 @@
 import 'package:thor/thor.dart';
 
 enum Alignment with ToStyleMixin {
-  topLeft('flex-start', 'flex-start'),
-  topCenter('flex-start', 'center'),
-  topRight('flex-start', 'flex-end'),
-  centerLeft('center', 'flex-start'),
-  center('center', 'center'),
-  centerRight('center', 'flex-end'),
-  bottomLeft('flex-end', 'flex-start'),
-  bottomCenter('flex-end', 'center'),
-  bottomRight('flex-end', 'flex-end');
+  topLeft('align-top-left'),
+  topCenter('align-top-center'),
+  topRight('align-top-right'),
+  centerLeft('align-center-left'),
+  center('align-center'),
+  centerRight('align-center-right'),
+  bottomLeft('align-bottom-left'),
+  bottomCenter('align-bottom-center'),
+  bottomRight('align-bottom-right');
 
-  const Alignment(this.alignItems, this.justifyContent);
-  final String alignItems;
-  final String justifyContent;
+  const Alignment(this.value);
+  final String value;
 
   @override
-  String toStyle() =>
-      'flex; flex: 1; align-items: $alignItems; justify-content: $justifyContent';
+  String toStyle() => value;
 }

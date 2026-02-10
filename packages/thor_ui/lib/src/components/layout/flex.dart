@@ -21,7 +21,7 @@ class Flex extends MultiChildElementComponent {
   final MainAxisSize mainAxisSize;
   @ClassNameAnnotation()
   final CrossAxisAlignment crossAxisAlignment;
-  @PropertyAnnotation('gap')
+  @StylePropertyAnnotation('gap')
   final Unit? gap;
 
   final List<Component> _children;

@@ -13,7 +13,7 @@ class Padding extends SingleChildElementComponent {
     return ElementNode(
       tag: _$tag,
       children: children,
-      attributes: {..._$attributes, 'style': ?_$styles},
+      attributes: _$attributes,
     );
   }
 }

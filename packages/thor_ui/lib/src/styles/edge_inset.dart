@@ -4,13 +4,13 @@ part 'edge_inset.g.dart';
 
 @StyleAnnotation()
 class EdgeInsets {
-  @PropertyAnnotation('padding-top')
+  @StylePropertyAnnotation('padding-top')
   final Unit? top;
-  @PropertyAnnotation('padding-right')
+  @StylePropertyAnnotation('padding-right')
   final Unit? right;
-  @PropertyAnnotation('padding-bottom')
+  @StylePropertyAnnotation('padding-bottom')
   final Unit? bottom;
-  @PropertyAnnotation('padding-left')
+  @StylePropertyAnnotation('padding-left')
   final Unit? left;
 
   const EdgeInsets.all(Unit value)

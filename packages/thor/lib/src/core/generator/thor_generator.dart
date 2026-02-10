@@ -100,16 +100,57 @@ extension ${className}Css on $className {
 
   /// Generates `_$attributes` — always includes the runtime type as CSS class,
   /// plus simple types (String, int, bool, etc.) that map to HTML attributes.
+  /// Fields with `@ClassNameAnnotation()` add their values as CSS class names.
   void _generateAttributesGetter(
     StringBuffer buffer,
     ClassElement classElement,
   ) {
     final entries = <String>[];
-    String? userClassField;
+    final classNameParts =
+        <String>[]; // expressions for @ClassNameAnnotation fields
 
     for (final field in _getAllFields(classElement)) {
       if (field.isStatic || field.isSynthetic) continue;
       if (_hasAnnotation(field, 'StyleAnnotation')) continue;
+
+      // Handle @ClassNameAnnotation — adds CSS class names from field values
+      if (_hasAnnotation(field, 'ClassNameAnnotation')) {
+        final fixedClassName = _getClassNameAnnotationClassName(field);
+        if (fixedClassName != null) {
+          // Fixed class name from annotation parameter
+          final stripped = fixedClassName.startsWith('.')
+              ? fixedClassName.substring(1)
+              : fixedClassName;
+          classNameParts.add("'$stripped'");
+        } else {
+          // Dynamic — use field's runtime value
+          final type = field.type;
+          final isNullable =
+              type.nullabilitySuffix == NullabilitySuffix.question;
+          if (type is InterfaceType &&
+              type.element is EnumElement &&
+              _hasField(type.element, 'value')) {
+            // Enum with .value → use .value
+            if (isNullable) {
+              classNameParts.add(
+                'if (${field.name} != null) ${field.name}!.value',
+              );
+            } else {
+              classNameParts.add('${field.name}.value');
+            }
+          } else {
+            // Fallback to toString()
+            if (isNullable) {
+              classNameParts.add(
+                'if (${field.name} != null) ${field.name}!.toString()',
+              );
+            } else {
+              classNameParts.add('${field.name}.toString()');
+            }
+          }
+        }
+        continue;
+      }
 
       final attrName = _getPropertyAnnotationName(field);
       if (attrName == null) continue;
@@ -117,21 +158,19 @@ extension ${className}Css on $className {
       // If the type has toStyle()/toCss(), or is explicitly marked as style → skip here
       if (_isStyleType(field.type) || _isPropertyMarkedAsStyle(field)) continue;
 
-      // Track if user has a 'class' field to merge with auto-generated type
+      // Track if user has a 'class' field to merge into classNameParts
       if (attrName == 'class') {
         final isNullable =
             field.type.nullabilitySuffix == NullabilitySuffix.question;
         final isString = field.type.isDartCoreString;
         if (isNullable) {
-          userClassField = isString
+          final expr = isString
               ? '${field.name}!'
               : '${field.name}!.toString()';
-          entries.add(
-            "if (${field.name} != null) 'class': '\$_\$className \${$userClassField}' else 'class': _\$className",
-          );
+          classNameParts.add('if (${field.name} != null) $expr');
         } else {
-          userClassField = isString ? field.name : '${field.name}.toString()';
-          entries.add("'class': '\$_\$className \$$userClassField'");
+          final expr = isString ? field.name : '${field.name}.toString()';
+          classNameParts.add(expr);
         }
         continue;
       }
@@ -151,17 +190,35 @@ extension ${className}Css on $className {
       }
     }
 
-    // Always add 'class' with runtime type if user didn't define one
-    if (userClassField == null) {
-      entries.insert(0, "'class': _\$className");
-    }
-
+    // Generate _$className getter
     final customClassName = _getComponentClassName(classElement);
     if (customClassName != null) {
       buffer.writeln("  String get _\$className => '$customClassName';");
     } else {
       buffer.writeln("  String get _\$className => runtimeType.toString();");
     }
+
+    // Build 'class' attribute
+    if (classNameParts.isNotEmpty) {
+      // Generate _$classNames that combines _$className + @ClassNameAnnotation values
+      buffer.writeln('  String get _\$classNames => [');
+      buffer.writeln('    _\$className,');
+      for (final part in classNameParts) {
+        buffer.writeln('    $part,');
+      }
+      buffer.writeln(
+        "  ].map((c) => c.startsWith('.') ? c.substring(1) : c).join(' ');",
+      );
+      entries.insert(0, "'class': _\$classNames");
+    } else {
+      entries.insert(0, "'class': _\$className");
+    }
+
+    // Include styles in attributes if component has style fields
+    if (_hasStyleFields(classElement)) {
+      entries.add("'style': ?_\$styles");
+    }
+
     buffer.writeln('  Map<String, String> get _\$attributes => {');
     for (final entry in entries) {
       buffer.writeln('    $entry,');
@@ -193,8 +250,9 @@ extension ${className}Css on $className {
       // @PropertyAnnotation on field with style-capable type or marked isStyle
       final cssProperty = _getPropertyAnnotationName(field);
       if (cssProperty == null) continue;
-      if (!_isStyleType(field.type) && !_isPropertyMarkedAsStyle(field))
+      if (!_isStyleType(field.type) && !_isPropertyMarkedAsStyle(field)) {
         continue;
+      }
 
       final valueExpr = _getValueExpression(field);
       if (valueExpr == null) continue;
@@ -218,6 +276,20 @@ extension ${className}Css on $className {
     buffer.writeln('    ].where((s) => s.isNotEmpty);');
     buffer.writeln("    return parts.isEmpty ? null : parts.join('; ');");
     buffer.writeln('  }');
+  }
+
+  /// Returns true if the class has fields that would generate `_$styles`.
+  bool _hasStyleFields(ClassElement classElement) {
+    for (final field in _getAllFields(classElement)) {
+      if (field.isStatic || field.isSynthetic) continue;
+      if (_hasAnnotation(field, 'StyleAnnotation')) return true;
+      final cssProperty = _getPropertyAnnotationName(field);
+      if (cssProperty == null) continue;
+      if (_isStyleType(field.type) || _isPropertyMarkedAsStyle(field)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // ---- Type classification ----
@@ -252,7 +324,7 @@ extension ${className}Css on $className {
     for (final meta in field.metadata) {
       final element = meta.element;
       if (element is ConstructorElement &&
-          element.enclosingElement3.name == 'PropertyAnnotation') {
+          element.enclosingElement3.name == 'StylePropertyAnnotation') {
         final value = meta.computeConstantValue();
         return value?.getField('isStyle')?.toBoolValue() ?? false;
       }
@@ -314,11 +386,25 @@ extension ${className}Css on $className {
     return null;
   }
 
+  /// Returns the fixed className from `@ClassNameAnnotation(className: '...')`,
+  /// or null if no className was specified (meaning use the field's runtime value).
+  String? _getClassNameAnnotationClassName(FieldElement field) {
+    for (final meta in field.metadata) {
+      final element = meta.element;
+      if (element is ConstructorElement &&
+          element.enclosingElement3.name == 'ClassNameAnnotation') {
+        final value = meta.computeConstantValue();
+        return value?.getField('className')?.toStringValue();
+      }
+    }
+    return null;
+  }
+
   String? _getPropertyAnnotationName(FieldElement field) {
     for (final meta in field.metadata) {
       final element = meta.element;
       if (element is ConstructorElement &&
-          element.enclosingElement3.name == 'PropertyAnnotation') {
+          element.enclosingElement3.name == 'StylePropertyAnnotation') {
         final value = meta.computeConstantValue();
         return value?.getField('name')?.toStringValue();
       }

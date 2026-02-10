@@ -9,4 +9,3 @@ export 'border_radius.dart';
 export 'color.dart';
 export 'edge_inset.dart';
 export 'types/types.dart';
-export 'thor_style_sheet.dart';

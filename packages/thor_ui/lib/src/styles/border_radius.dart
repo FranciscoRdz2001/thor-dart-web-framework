@@ -3,13 +3,13 @@ part 'border_radius.g.dart';
 
 @StyleAnnotation()
 class BorderRadius {
-  @PropertyAnnotation('border-top-left-radius')
+  @StylePropertyAnnotation('border-top-left-radius')
   final Unit? topLeft;
-  @PropertyAnnotation('border-top-right-radius')
+  @StylePropertyAnnotation('border-top-right-radius')
   final Unit? topRight;
-  @PropertyAnnotation('border-bottom-right-radius')
+  @StylePropertyAnnotation('border-bottom-right-radius')
   final Unit? bottomRight;
-  @PropertyAnnotation('border-bottom-left-radius')
+  @StylePropertyAnnotation('border-bottom-left-radius')
   final Unit? bottomLeft;
 
   const BorderRadius.all(Unit value)

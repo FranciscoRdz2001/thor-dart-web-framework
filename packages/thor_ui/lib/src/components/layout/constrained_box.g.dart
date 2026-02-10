@@ -9,7 +9,10 @@ part of 'constrained_box.dart';
 extension _$ConstrainedBoxGenerated on ConstrainedBox {
   String get _$tag => 'div';
   String get _$className => 'constrained-box';
-  Map<String, String> get _$attributes => {'class': _$className};
+  Map<String, String> get _$attributes => {
+    'class': _$className,
+    'style': ?_$styles,
+  };
   String? get _$styles {
     final parts = <String>[constraints.toCss()].where((s) => s.isNotEmpty);
     return parts.isEmpty ? null : parts.join('; ');
