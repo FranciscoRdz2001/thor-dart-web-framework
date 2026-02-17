@@ -3,7 +3,7 @@ part 'expanded.g.dart';
 
 @ComponentAnnotation('div', className: '.expanded')
 class Expanded extends SingleChildElementComponent {
-  @StylePropertyAnnotation('flex', isStyle: true)
+  @StylePropertyAnnotation('flex-grow', isStyle: true)
   final int flex;
 
   const Expanded({super.key, super.styleClasses, this.flex = 1, super.child});

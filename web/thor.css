@@ -24,7 +24,6 @@
    - do not shrink unexpectedly (Flutter would overflow / require Flexible)
 */
 .box, .Box {
-  display: block;
   min-width: 0;
   flex: 0 0 auto; /* do not grow, do not shrink */
 }
@@ -92,6 +91,9 @@
   min-width: 0;
 }
 
+.row, .column {
+  display: flex !important;
+}
 /* If the Expanded's direct child is a Box, it should fill the Expanded width */
 .row > .expanded > .box,
 .row > .expanded > .Box {
@@ -116,7 +118,6 @@
 /* ─── Text ───────────────────────────────────────────────────── */
 /* Your renderer uses class="Text". Give it safe defaults for flex layouts. */
 .Text, .text {
-  display: inline-block;
   min-width: 0; /* important for ellipsis inside flex */
 }
 

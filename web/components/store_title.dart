@@ -3,46 +3,50 @@ import 'package:thor_ui/thor_ui.dart';
 import '../styles/app_styles.dart';
 
 class StoreTitle extends StatelessComponent {
-  /// Component-scoped styles.
-  static final _heroGap = StyleClass('hero-gap', css([
-    SpacingStyle(gap: 16.px),
-  ]));
-
-  static final _heroRow = StyleClass('hero-row', css([
-    SpacingStyle(gap: 32.px),
-  ]));
-
+  final _heroTitleStyle = StyleClass(
+    'store-title',
+    css([TypographyStyle(fontSize: 32.px, fontWeight: FontWeight.bold)]),
+  );
+  final _heroSubtitleStyle = StyleClass(
+    'store-subtitle',
+    css([
+      TypographyStyle(fontSize: 14.px, color: Color.grey),
+      SizeStyle(maxWidth: 600.px),
+      DecorationStyle(backgroundColor: Color('#f9f9f9'), borderRadius: 16.px),
+      SpacingStyle(
+        paddingTop: 12.px,
+        paddingBottom: 12.px,
+        paddingLeft: 16.px,
+        paddingRight: 16.px,
+      ),
+    ]),
+  );
   @override
-  List<StyleClass> get componentStyles => [_heroGap, _heroRow];
+  List<StyleClass> get componentStyles => [_heroTitleStyle, _heroSubtitleStyle];
 
   @override
   Component build(BuildContext context) {
     return Row(
-      styleClasses: [_heroRow],
+      gap: 16.px,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: Column(
-            styleClasses: [_heroGap],
+            gap: 12.px,
             children: [
               Text(
                 'Discover Our Latest Collection',
-                styleClasses: [AppStyles.heroTitle],
+                styleClasses: [_heroTitleStyle],
               ),
               Text(
                 'Handpicked products with premium quality. '
                 'Explore new arrivals and exclusive deals curated just for you.',
-                styleClasses: [AppStyles.heroSubtitle],
+                styleClasses: [_heroSubtitleStyle],
               ),
-              Box(styleClasses: [AppStyles.spacerSm]),
-              Row(
-                gap: 12.px,
-                children: [
-                  Box(
-                    styleClasses: [AppStyles.heroCta],
-                    child: Text('Shop Now'),
-                  ),
-                ],
+              Box(
+                styleClasses: [AppStyles.heroCta],
+                size: SizeStyle(width: 120.px),
+                child: Text('Shop Now'),
               ),
             ],
           ),
@@ -57,8 +61,14 @@ class StoreTitle extends StatelessComponent {
                   mainAxisAlignment: MainAxisAlignment.center,
                   gap: 8.px,
                   children: [
-                    Text('Special Offer!', styleClasses: [AppStyles.offerTitle]),
-                    Text('Up to 50% off this weekend', styleClasses: [AppStyles.offerSubtitle]),
+                    Text(
+                      'Special Offer!',
+                      styleClasses: [AppStyles.offerTitle],
+                    ),
+                    Text(
+                      'Up to 50% off this weekend',
+                      styleClasses: [AppStyles.offerSubtitle],
+                    ),
                   ],
                 ),
               ),

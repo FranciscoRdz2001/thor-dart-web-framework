@@ -22,5 +22,5 @@ class Color with ToStyleMixin {
   static const darkGrey = Color('#404040');
 
   @override
-  String toStyle() => value;  
+  String toStyle() => value;
 }

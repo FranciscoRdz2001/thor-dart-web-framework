@@ -25,6 +25,8 @@ extension _$RowGenerated on Row {
         'align-items: ${crossAxisAlignment.toStyle()}',
       if (gap != null) 'gap: ${gap!.toStyle()}',
       if (spacing != null) spacing!.toCss(),
+      if (size != null && size!.maxWidth != null && size!.width == null)
+        'width: 100%',
       if (size != null) size!.toCss(),
     ].where((s) => s.isNotEmpty);
     return parts.isEmpty ? null : parts.join('; ');

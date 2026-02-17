@@ -5,3 +5,4 @@ export 'expanded.dart';
 export 'stack.dart';
 export 'positioned.dart';
 export 'align.dart';
+export 'center.dart';
